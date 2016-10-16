@@ -1,0 +1,96 @@
+package sly;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class OptimizationTest {
+	private static Optimization o = new Optimization();
+	@Test
+	public void testdayForWeek() throws Exception {//测试对应日期
+		assertEquals(4,Optimization.dayForWeek("2016-06-02"));
+		assertEquals(5,Optimization.dayForWeek("2016-06-03"));
+		assertEquals(6,Optimization.dayForWeek("2016-06-04"));
+		assertEquals(7,Optimization.dayForWeek("2016-06-05"));
+		assertEquals(1,Optimization.dayForWeek("2016-06-06"));
+		assertEquals(2,Optimization.dayForWeek("2016-06-07"));
+		assertEquals(3,Optimization.dayForWeek("2016-06-08"));
+		assertEquals(4,Optimization.dayForWeek("2016-06-09"));
+		assertEquals(5,Optimization.dayForWeek("2016-06-10"));
+		assertEquals(6,Optimization.dayForWeek("2016-06-11"));
+	}
+
+	@Test
+	public void testfieldnums() {//测试场地个数
+		assertEquals(2,Optimization.fieldnums(7));
+		assertEquals(2,Optimization.fieldnums(14));
+		assertEquals(4,Optimization.fieldnums(22));
+		assertEquals(0,Optimization.fieldnums(3));
+		assertEquals(2,Optimization.fieldnums(15));
+		assertEquals(2,Optimization.fieldnums(12));
+		assertEquals(3,Optimization.fieldnums(19));
+		assertEquals(3,Optimization.fieldnums(16));
+		assertEquals(1,Optimization.fieldnums(5));
+		assertEquals(2,Optimization.fieldnums(11));
+	}
+
+	@Test
+	public void testIncome() {//测试收入
+		assertEquals(210,o.Income(7));
+		assertEquals(420,o.Income(14));
+		assertEquals(660,o.Income(22));
+		assertEquals(0,  o.Income(3));
+		assertEquals(450,o.Income(15));
+		assertEquals(360,o.Income(12));
+		assertEquals(570,o.Income(19));
+		assertEquals(480,o.Income(16));
+		assertEquals(150,o.Income(5));
+		assertEquals(330,o.Income(11));
+	}
+		
+	@Test
+	public void testPrize() {//测试场地价格
+		assertEquals(120, o.Prize(4, 20, 22));
+		assertEquals(90,  o.Prize(5, 9 , 12));
+		assertEquals(150, o.Prize(6, 14, 17));
+		assertEquals(180, o.Prize(7, 19, 22));
+		assertEquals(150, o.Prize(1, 12, 15));
+		assertEquals(100, o.Prize(2, 15, 17));
+		assertEquals(110, o.Prize(3, 10, 13));
+		assertEquals(100, o.Prize(4, 16, 18));
+		assertEquals(120, o.Prize(5, 20, 22));
+		assertEquals(100, o.Prize(6, 13, 15));
+	}
+	
+	@Test
+	public void testgenerateSummary() throws Exception {
+		assertEquals("[Summary]\r\n"+
+	                 "\r\n"+
+		             "2016-06-02 20:00~22:00 +210 -240 -30\r\n"+
+	                 "2016-06-03 09:00~12:00 +420 -180 +240\r\n"+
+	                 "2016-06-04 14:00~17:00 +660 -600 +60\r\n"+
+	                 "2016-06-05 19:00~22:00 +0 -0 0\r\n"+
+	                 "2016-06-06 12:00~15:00 +450 -300 +150\r\n"+
+	                 "2016-06-07 15:00~17:00 +360 -200 +160\r\n"+
+	                 "2016-06-08 10:00~13:00 +570 -330 +240\r\n"+
+	                 "2016-06-09 16:00~18:00 +480 -300 +180\r\n"+
+	                 "2016-06-10 20:00~22:00 +150 -120 +30\r\n"+
+	                 "2016-06-11 13:00~15:00 +330 -200 +130\r\n"+
+	                 "\r\n"+
+	                 "Total Income: 3630\r\n"+
+	                 "Total Payment: 2470\r\n"+
+	                 "Profit: 1160\r\n"
+	    
+	,o.generateSummary("[2016-06-02 20:00~22:00 7, "
+			                     + "2016-06-03 09:00~12:00 14, "
+			                     + "2016-06-04 14:00~17:00 22, "
+			                     + "2016-06-05 19:00~22:00 3, "
+			                     + "2016-06-06 12:00~15:00 15, "
+			                     + "2016-06-07 15:00~17:00 12, "
+			                     + "2016-06-08 10:00~13:00 19, "
+			                     + "2016-06-09 16:00~18:00 16, "
+			                     + "2016-06-10 20:00~22:00 5, "
+			                     + "2016-06-11 13:00~15:00 11]"));
+	}
+
+}
