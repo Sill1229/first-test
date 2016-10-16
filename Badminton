@@ -1,0 +1,145 @@
+package sly;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+public class Optimization {
+		
+	public static int dayForWeek(String pTime) throws Exception {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar c = Calendar.getInstance();
+		c.setTime(format.parse(pTime));
+		int dayForWeek = 0;
+		if(c.get(Calendar.DAY_OF_WEEK) == 1){
+		dayForWeek = 7;
+		}else{
+		dayForWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+		}
+		return dayForWeek;
+		}//查询week
+	
+	public static int fieldnums(int M){
+		int T = M%6,nums;
+		if (M < 4)
+			nums = 0;
+		else if (M==4||M==5)
+			nums = 1;
+		else if (M<16&&M>=6)	
+		    nums = 2;
+		else if (M<22&&M>=16)	
+		    nums = 3;
+		else if (M==22||M==23)	
+		    nums = 4;
+		else {
+			nums = T;
+		}
+		return nums;
+		}//确定场地个数
+	
+	public int Income(int M){
+		int single = 30;
+		if(M>4){
+		int income = single * M;
+		return income;
+		}
+		else
+			return 0;		
+	}//每次活动收入
+	
+	public int Prize(int week ,int m ,int n) {
+		Map<Integer, Integer> mapweekday = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> mapweekend = new HashMap<Integer, Integer>();
+		for(int i =9;i<22;i++){
+			if(i<12){
+			mapweekday.put(i, 30);
+			}		    
+			else if((i<18)&&(i>=12)){
+			mapweekday.put(i, 50);
+			}
+			else if((i<20)&&(i>=18)){
+		    mapweekday.put(i, 80);
+			}
+			else
+	        mapweekday.put(i, 60);
+		}//工作日
+		for(int i =9;i<22;i++){
+			if(i<12){
+			mapweekend.put(i, 40);
+			} 
+			else if((i<18)&&(i>=12)){
+		    mapweekend.put(i, 50);		    			
+			}
+			else
+			mapweekend.put(i, 60);
+		}//周末
+		if(week<6){
+			if((m>8)&&(n<23)&&(n-m)==2){
+			return mapweekday.get(m)+mapweekday.get(m+1);
+			}//2小时活动
+			return mapweekday.get(m)+mapweekday.get(m+1)+mapweekday.get(m+2);
+			//3小时活动
+		}//工作日场地价格
+		else{
+			if((m>8)&&(n<23)&&(n-m)==2){
+				return mapweekend.get(m)+mapweekend.get(m+1);
+				}//2小时活动
+				return mapweekend.get(m)+mapweekend.get(m+1)+mapweekend.get(m+2);
+				//3小时活动		
+		}//周末场地价格
+	}//场地价目表
+		
+	public String generateSummary(String input)throws Exception{   	  
+	      String[] temp = input.split("\\r?\\n?,");
+	      int Tincome = 0,Tpayment = 0,Tprofit = 0;
+		  StringBuffer sb = new StringBuffer();
+		  sb.append("[Summary]\r\n");
+		  sb.append("\r\n");
+	      for (String a  : temp){
+	    	    a = a.replace("[", " ");
+				a = a.replace("]", "");
+				int M = Integer.parseInt(a.substring(24));//读取人数
+				int T = fieldnums(M);//计算场地
+				int h1 = Integer.parseInt(a.substring(12,14));//初始时间
+				int h2 = Integer.parseInt(a.substring(18,20));//结束时间
+				int date = dayForWeek(a.substring(1, 11)); //日期week
+				int income = Income(M);//收入
+				Tincome += income;
+				int payment = (Prize(date, h1, h2))*T;//开销
+				Tpayment += payment;
+				int profit = income - payment;//利润
+				Tprofit += profit;
+				if(profit>0){
+					sb.append(a.substring(1, 23)+" +"+income+" -"+payment+" +"+profit+"\r\n");
+				}
+				else{
+					sb.append(a.substring(1, 23)+" +"+income+" -"+payment+" "+profit+"\r\n");
+				}			
+			}
+	      sb.append("\r\n");
+	      sb.append("Total Income: "+Tincome+"\r\n");
+	      sb.append("Total Payment: "+Tpayment+"\r\n");
+	      sb.append("Profit: "+Tprofit+"\r\n");
+				
+    	return sb.toString();
+    }
+    public static void main(String[] args) throws Exception {
+    	String s = "";		
+		List<String> str_list = new ArrayList<String>();//存储输入的字符
+	    Scanner sc=new Scanner(System.in);//获取控制台输入		
+	    while (true) {
+			s=sc.nextLine();
+			if(s.equals("  "))//2个空格停止输入				
+	              break; 				    
+		//防止2个空格对list边界的干扰
+		str_list.add(s);		        
+		}
+		sc.close();
+		Optimization o = new Optimization();
+    	System.out.println(o.generateSummary(str_list.toString()));
+    }
+}
